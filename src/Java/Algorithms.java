@@ -161,7 +161,7 @@ public final class Algorithms {
         Stack<Integer> stack = new Stack<>();
 
         for (int i = 0; i < n; i++) {
-            if (!visited[i]) dfs1(i, adj, visited, stack);
+            if (!visited[i]) dfsScc(i, adj, visited, stack);
         }
 
         Arrays.fill(visited, false);
@@ -172,7 +172,7 @@ public final class Algorithms {
         while (!stack.isEmpty()) {
             int v = stack.pop();
             if (!visited[v]) {
-                dfs2(v, revAdj, visited, comp, compId);
+                dfsSccRev(v, revAdj, visited, comp, compId);
                 compId++;
             }
         }
@@ -207,7 +207,7 @@ public final class Algorithms {
         for (int i = 0; i < n; i++) adj.add(new ArrayList<>());
         for (int[] e : edges) adj.get(e[0]).add(e[1]);
 
-        int[] state = new int[n]; 
+        int[] state = new int[n];
         List<Integer> order = new ArrayList<>();
         boolean acyclic = true;
 
@@ -248,7 +248,7 @@ public final class Algorithms {
 
         for (int i = 0; i < n; i++) {
             if (state[i] == 0) {
-                if (!dfsTopo(i, adj, state, order)) {
+                if (!dfsTopoWeighted(i, adj, state, order)) {
                     acyclic = false;
                     break;
                 }
@@ -297,45 +297,45 @@ public final class Algorithms {
         return parent[x];
     }
 
-    private static void dfs1(int v, List<List<Integer>> adj, boolean[] visited, Stack<Integer> stack) {
+    private static void dfsScc(int v, List<List<Integer>> adj, boolean[] visited, Stack<Integer> stack) {
         visited[v] = true;
         for (int u : adj.get(v)) {
-            if (!visited[u]) dfs1(u, adj, visited, stack);
+            if (!visited[u]) dfsScc(u, adj, visited, stack);
         }
         stack.push(v);
     }
 
-    private static void dfs2(int v, List<List<Integer>> revAdj, boolean[] visited, int[] comp, int compId) {
+    private static void dfsSccRev(int v, List<List<Integer>> revAdj, boolean[] visited, int[] comp, int compId) {
         visited[v] = true;
         comp[v] = compId;
         for (int u : revAdj.get(v)) {
-            if (!visited[u]) dfs2(u, revAdj, visited, comp, compId);
+            if (!visited[u]) dfsSccRev(u, revAdj, visited, comp, compId);
         }
     }
 
     private static boolean dfsTopo(int v, List<List<Integer>> adj, int[] state, List<Integer> order) {
-        state[v] = 1; 
+        state[v] = 1;
         for (int u : adj.get(v)) {
-            if (state[u] == 1) return false; 
+            if (state[u] == 1) return false;
             if (state[u] == 0) {
                 if (!dfsTopo(u, adj, state, order)) return false;
             }
         }
-        state[v] = 2; 
+        state[v] = 2;
         order.add(v);
         return true;
     }
 
-    private static boolean dfsTopo(int v, List<List<int[]>> adj, int[] state, List<Integer> order) {
-        state[v] = 1; 
+    private static boolean dfsTopoWeighted(int v, List<List<int[]>> adj, int[] state, List<Integer> order) {
+        state[v] = 1;
         for (int[] edge : adj.get(v)) {
             int u = edge[0];
-            if (state[u] == 1) return false; 
+            if (state[u] == 1) return false;
             if (state[u] == 0) {
-                if (!dfsTopo(u, adj, state, order)) return false;
+                if (!dfsTopoWeighted(u, adj, state, order)) return false;
             }
         }
-        state[v] = 2; 
+        state[v] = 2;
         order.add(v);
         return true;
     }
