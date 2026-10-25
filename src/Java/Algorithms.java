@@ -177,9 +177,9 @@ public final class Algorithms {
             }
         }
 
-        List<List<Integer>> components = new ArrayList<>();
-        for (int i = 0; i < compId; i++) components.add(new ArrayList<>());
-        for (int i = 0; i < n; i++) components.get(comp[i]).add(i);
+        // Build flat array of labels
+        List<Integer> flatComponents = new ArrayList<>();
+        for (int i = 0; i < n; i++) flatComponents.add(comp[i]);
 
         Set<String> pairSet = new HashSet<>();
         List<List<Integer>> pairs = new ArrayList<>();
@@ -194,7 +194,7 @@ public final class Algorithms {
         }
 
         Map<String, Object> result = new HashMap<>();
-        result.put("components", components);
+        result.put("component", flatComponents);
         result.put("condensation", pairs);
         return result;
     }
